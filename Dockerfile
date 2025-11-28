@@ -25,7 +25,7 @@ COPY . .
 
 # Safely copy built assets — never fails even if empty
 RUN rm -rf public/dist && mkdir -p public/dist
-COPY --from=frontend /app/public/dist/. public/dist/
+COPY --from=frontend /app/public/dist/. public/dist/ || true
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
