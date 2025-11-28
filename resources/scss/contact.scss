@@ -1,0 +1,86 @@
+.sub-section {
+    min-height: calc(100vh - 360px);
+    padding: 6rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+
+    .welcome-text {
+        h3 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1.5rem;
+            opacity: 0.9;
+        }
+    }
+}
+
+.contact-map-section {
+    .map-card {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .contact-card {
+        border-radius: 12px;
+        transition: transform .18s ease, box-shadow .18s ease;
+        display: flex;
+        align-items: flex-start;
+        gap: .75rem;
+
+        &:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 32px rgba(16, 24, 40, 0.08);
+        }
+    }
+
+    .icon-circle {
+        min-width: 56px;
+        min-height: 56px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+    }
+
+    // soft background variants
+    .bg-soft-primary {
+        background: linear-gradient(135deg, #6d3be0 0%, rgba(107, 59, 224, 0.85) 100%);
+    }
+
+    .bg-soft-success {
+        background: linear-gradient(135deg, #10b981 0%, rgba(16, 185, 129, 0.9) 100%);
+    }
+
+    .bg-soft-info {
+        background: linear-gradient(135deg, #0ea5e9 0%, rgba(14, 165, 233, 0.9) 100%);
+    }
+
+    // text styles
+    h5 {
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+
+    p {
+        margin-bottom: 0.5rem;
+    }
+
+    // smaller screens tune
+    @media (max-width: 767.98px) {
+        .map-card {
+            min-height: 300px;
+        }
+
+        .icon-circle {
+            min-width: 48px;
+            min-height: 48px;
+            border-radius: 10px;
+        }
+    }
+}
