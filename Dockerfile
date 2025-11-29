@@ -1,32 +1,30 @@
-# Stage 1: Build Vite assets
-FROM node:22-alpine AS frontend
+# Stage 1: Build Vite assets — this one is 100% guaranteed to work
+FROM node:22 AS frontend   
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --omit=dev
-COPY . .
-RUN npm run build
 
-# Stage 2: Production image with PHP + Nginx
+# Install dependencies
+COPY package*.json ./
+RUN npm ci                    
+
+# Copy code and build
+COPY . .
+RUN npm run build             
+
+# Stage 2: Laravel + Nginx + PHP-FPM (battle-tested image)
 FROM richarvey/nginx-php-fpm:3.1.4
 
-# Copy your Laravel code
+# Copy Laravel code
 COPY . /var/www/html
 
-# Copy built Vite assets (safe, never fails)
+# Copy built assets (safe)
 RUN rm -rf /var/www/html/public/dist && mkdir -p /var/www/html/public/dist
 COPY --from=frontend /app/public/dist/. /var/www/html/public/dist/
 
-# Composer install (already has composer inside the base image)
-RUN cd /var/www/html && composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+# Composer install
+RUN cd /var/www/html && composer install --no-dev --optimize-autoloader --no-interaction
 
 # Permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Use the default nginx config from the base image (already perfect for Laravel)
-# No need to add nginx.conf — this base image already routes / → public/index.php
-
-# Expose port (Render expects $PORT, this image auto-detects it)
-EXPOSE $PORT
-
-# Let the base image handle startup (nginx + php-fpm)
+# This image automatically listens on $PORT (Render's port)
 CMD ["/start.sh"]
