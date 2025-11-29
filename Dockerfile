@@ -1,23 +1,24 @@
-# Stage 1: Build Vite assets — this one is 100% guaranteed to work
-FROM node:22 AS frontend   
+# Stage 1: Build Vite
+FROM node:22 AS frontend
 WORKDIR /app
-
-# Install dependencies
 COPY package*.json ./
-RUN npm ci                    
-
-# Copy code and build
+RUN npm ci
 COPY . .
-RUN npm run build             
+RUN npm run build
 
-# Stage 2: Laravel + Nginx + PHP-FPM (battle-tested image)
+# Stage 2: Clean Laravel + Nginx + PHP-FPM
 FROM richarvey/nginx-php-fpm:3.1.4
 
-# Copy Laravel code
+# Remove ALL default junk that ships with the image
+RUN rm -rf /var/www/html/* \
+    && rm -f /etc/nginx/sites-enabled/default \
+    && rm -f /etc/nginx/conf.d/default.conf
+
+# Copy your actual Laravel app
 COPY . /var/www/html
 
-# Copy built assets (safe)
-RUN rm -rf /var/www/html/public/dist && mkdir -p /var/www/html/public/dist
+# Copy built Vite assets
+RUN mkdir -p /var/www/html/public/dist
 COPY --from=frontend /app/public/dist/. /var/www/html/public/dist/
 
 # Composer install
@@ -26,5 +27,8 @@ RUN cd /var/www/html && composer install --no-dev --optimize-autoloader --no-int
 # Permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# This image automatically listens on $PORT (Render's port)
+# Use Laravel-optimized Nginx config (this is the key!)
+COPY nginx-laravel.conf /etc/nginx/sites-enabled/default
+
+# Start
 CMD ["/start.sh"]
