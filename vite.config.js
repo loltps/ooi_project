@@ -13,6 +13,7 @@ export default defineConfig({
                 'resources/scss/about_us.scss',
                 'resources/scss/contact.scss',
             ],
+            buildDirectory: 'dist',
             refresh: true,
         }),
     ],
