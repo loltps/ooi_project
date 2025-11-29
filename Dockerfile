@@ -1,34 +1,69 @@
-# Stage 1: Build Vite
+# Stage 1 - Build Frontend (Vite)
 FROM node:22 AS frontend
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+# Use npm ci when lockfile present (faster, deterministic)
+RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 COPY . .
-RUN npm run build
+RUN npm run build && \
+    mv public/dist/.vite/manifest.json public/dist/manifest.json || true
 
-# Stage 2: Clean Laravel + Nginx + PHP-FPM
-FROM richarvey/nginx-php-fpm:3.1.4
+# Stage 2 - Backend (Laravel + PHP + Composer)
+FROM php:8.1-apache AS backend
 
-# Remove ALL default junk that ships with the image
-RUN rm -rf /var/www/html/* \
-    && rm -f /etc/nginx/sites-enabled/default \
-    && rm -f /etc/nginx/conf.d/default.conf
+# Install system dependencies & PHP extensions
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git curl unzip libpq-dev libonig-dev libzip-dev zip \
+    && docker-php-ext-install pdo pdo_mysql mbstring zip \
+    && a2enmod rewrite \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy your actual Laravel app
-COPY . /var/www/html
+# Copy composer binary from official composer image
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copy built Vite assets
-RUN mkdir -p /var/www/html/public/dist
-COPY --from=frontend /app/public/dist/. /var/www/html/public/dist/
+WORKDIR /var/www
 
-# Composer install
-RUN cd /var/www/html && composer install --no-dev --optimize-autoloader --no-interaction
+# Copy app files
+COPY . .
 
-# Permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Copy built frontend assets into container
+COPY --from=frontend /app/public/dist ./public/dist
 
-# Use Laravel-optimized Nginx config (this is the key!)
-COPY nginx-laravel.conf /etc/nginx/sites-enabled/default
+# Ensure Laravel sees build manifest and remove any hot file
+RUN cp -r public/dist public/build || true \
+    && cp public/dist/manifest.json public/build/manifest.json 2>/dev/null || true \
+    && rm -f public/hot
 
-# Start
-CMD ["/start.sh"]
+# Install PHP deps (prefer-dist, no-dev)
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+# Permissions (www-data)
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/public \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache \
+    && chmod -R 755 /var/www/public
+
+# Apache vhost
+RUN printf '%s\n' '<VirtualHost *:80>' \
+    '    DocumentRoot /var/www/public' \
+    '    <Directory /var/www/public>' \
+    '        AllowOverride All' \
+    '        Require all granted' \
+    '        Options -Indexes +FollowSymLinks' \
+    '    </Directory>' \
+    '    <Directory /var/www/public/dist>' \
+    '        Options -Indexes' \
+    '        Require all granted' \
+    '    </Directory>' \
+    '    <Directory /var/www/public/build>' \
+    '        Options -Indexes' \
+    '        Require all granted' \
+    '    </Directory>' \
+    '</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
+
+# Add startup script
+COPY render-start.sh /usr/local/bin/render-start.sh
+RUN chmod +x /usr/local/bin/render-start.sh
+
+EXPOSE 80
+
+CMD ["/usr/local/bin/render-start.sh"]
