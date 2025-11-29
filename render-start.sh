@@ -4,49 +4,60 @@ set -e
 echo "Starting container. APP_ENV=${APP_ENV:-production}"
 echo "UID=$(id -u) GID=$(id -g) USER=$(whoami)"
 
-# --- Debug: list built assets and manifest ---
-echo "---- public/dist listing ----"
-ls -la /var/www/public/dist || echo "public/dist missing"
-echo "---- public/dist/assets listing ----"
-ls -la /var/www/public/dist/assets || echo "public/dist/assets missing"
+# Ensure permissions are correct (no fatal errors)
+chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/public/dist /var/www/public/build 2>/dev/null || true
+chmod -R 775 /var/www/storage /var/www/bootstrap/cache 2>/dev/null || true
+chmod -R 755 /var/www/public/dist /var/www/public/build 2>/dev/null || true
 
-echo "---- manifest.json ----"
-if [ -f /var/www/public/dist/manifest.json ]; then
-  echo "manifest exists:"
-  cat /var/www/public/dist/manifest.json || true
-else
-  echo "manifest.json NOT FOUND in /var/www/public/dist"
+# Ensure manifest exists in both locations (Laravel sometimes expects /public/build)
+if [ -f /var/www/public/dist/manifest.json ] && [ ! -f /var/www/public/build/manifest.json ]; then
+    cp /var/www/public/dist/manifest.json /var/www/public/build/manifest.json || true
 fi
-echo "---- end manifest ----"
 
-# Optionally dump first css file content (if exists)
-first_css=$(ls /var/www/public/dist/assets/*.css 2>/dev/null | head -n1 || true)
-if [ -n "$first_css" ]; then
-  echo "---- first CSS file: $first_css (first 40 lines) ----"
-  head -n 40 "$first_css" || true
-  echo "---- end CSS preview ----"
-else
-  echo "No CSS files found in /var/www/public/dist/assets"
+# Remove Vite hot file (ensures production assets used)
+rm -f /var/www/public/hot || true
+
+# Optional debug block: toggle by setting DEBUG_ASSETS=true in your Render service
+if [ "${DEBUG_ASSETS:-false}" = "true" ]; then
+  echo "---- DEBUG: listing public/dist ----"
+  ls -la /var/www/public/dist || echo "public/dist missing"
+  echo "---- DEBUG: listing public/dist/assets ----"
+  ls -la /var/www/public/dist/assets || echo "public/dist/assets missing"
+  echo "---- DEBUG: manifest.json ----"
+  if [ -f /var/www/public/dist/manifest.json ]; then
+    cat /var/www/public/dist/manifest.json || true
+  else
+    echo "manifest.json NOT FOUND"
+  fi
+  echo "---- DEBUG END ----"
 fi
-# --- End debug ---
 
-# Ensure storage and cache dirs exist and are writable
-chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/public || true
-chmod -R 775 /var/www/storage /var/www/bootstrap/cache || true
+# Optional fallback: create a single predictable css file at public/css/app.css
+# Toggle with CREATE_FALLBACK_CSS=true
+if [ "${CREATE_FALLBACK_CSS:-false}" = "true" ]; then
+  echo "Creating fallback public/css/app.css from dist assets..."
+  mkdir -p /var/www/public/css || true
+  # Concatenate any CSS files produced by Vite into a single app.css
+  if ls /var/www/public/dist/assets/*.css 1> /dev/null 2>&1; then
+    cat /var/www/public/dist/assets/*.css > /var/www/public/css/app.css || true
+    chown www-data:www-data /var/www/public/css/app.css || true
+    chmod 644 /var/www/public/css/app.css || true
+    echo "Fallback CSS written to /var/www/public/css/app.css"
+  else
+    echo "No CSS files found to create fallback"
+  fi
+fi
 
-# Run Laravel optimizations only in non-local env (avoid on local dev)
-if [ "${APP_ENV:-production}" != "local" ]; then
-  echo "Caching config, routes and views..."
+# Run Laravel cache commands only if explicitly enabled.
+# For debugging, do NOT enable (set ENABLE_CONFIG_CACHE=true only when you know assets are stable).
+if [ "${ENABLE_CONFIG_CACHE:-false}" = "true" ] && [ -n "${APP_KEY:-}" ]; then
+  echo "Running artisan config/route/view cache..."
   php /var/www/artisan config:cache || true
   php /var/www/artisan route:cache || true
   php /var/www/artisan view:cache || true
+else
+  echo "Skipping artisan config/route/view cache (ENABLE_CONFIG_CACHE=${ENABLE_CONFIG_CACHE:-false})"
 fi
 
-# Optional: run migrations if env var is set (use with caution)
-if [ "${RUN_MIGRATIONS}" = "true" ]; then
-  echo "Running migrations..."
-  php /var/www/artisan migrate --force || true
-fi
-
-# Exec Apache in foreground (PID 1)
+# Start Apache in the foreground
 exec apache2-foreground
