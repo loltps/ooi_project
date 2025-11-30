@@ -1,10 +1,4 @@
 {
-  "resources/css/app.css": {
-    "file": "assets/app.l0sNRNKZ.js",
-    "name": "app",
-    "src": "resources/css/app.css",
-    "isEntry": true
-  },
   "resources/js/app.js": {
     "file": "assets/app.Byee0_H1.js",
     "name": "app",
@@ -13,25 +7,5 @@
     "css": [
       "assets/app.ByRoPtGx.css"
     ]
-  },
-  "resources/scss/about_us.scss": {
-    "file": "assets/about_us.DhXKn_xF.css",
-    "src": "resources/scss/about_us.scss",
-    "isEntry": true
-  },
-  "resources/scss/contact.scss": {
-    "file": "assets/contact.BP3bqeXR.css",
-    "src": "resources/scss/contact.scss",
-    "isEntry": true
-  },
-  "resources/scss/home.scss": {
-    "file": "assets/home.BRtc9KCY.css",
-    "src": "resources/scss/home.scss",
-    "isEntry": true
-  },
-  "resources/scss/index.scss": {
-    "file": "assets/index.CUUGzWOC.css",
-    "src": "resources/scss/index.scss",
-    "isEntry": true
   }
 }
