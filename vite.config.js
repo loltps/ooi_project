@@ -7,6 +7,11 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/js/app.js',
+                `resources/css/app.css`,
+                'resources/css/index.scss',
+                'resources/scss/home.scss',
+                'resources/scss/about.scss',
+                'resources/scss/contact.scss',
             ],
             buildDirectory: 'dist',
             refresh: true,
