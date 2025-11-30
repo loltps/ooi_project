@@ -37,10 +37,11 @@ RUN cp -r public/dist public/build || true \
 # Install PHP deps (prefer-dist, no-dev)
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
-# Permissions (www-data)
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/public \
-    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache \
-    && chmod -R 755 /var/www/public
+# Ensure vendor exists and owned by www-data
+RUN chown -R www-data:www-data /var/www/vendor || true \
+ && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/public || true \
+ && chmod -R 775 /var/www/storage /var/www/bootstrap/cache || true
+
 
 # Apache vhost
 RUN printf '%s\n' '<VirtualHost *:80>' \
