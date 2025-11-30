@@ -27,7 +27,7 @@ WORKDIR /var/www
 COPY . .
 
 # Copy built frontend assets into container
-COPY --from=frontend /app/public/dist ./public/dist
+COPY --from=frontend /app/public/build ./public/build
 
 # Ensure Laravel sees build manifest and remove any hot file
 RUN cp -r public/dist public/build || true \
