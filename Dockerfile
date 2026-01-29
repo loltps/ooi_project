@@ -5,7 +5,10 @@ COPY package*.json ./
 # Use npm ci when lockfile present (faster, deterministic)
 RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 COPY . .
-RUN npm run build
+RUN npm run build && \
+    if [ -f public/build/.vite/manifest.json ]; then \
+        cp public/build/.vite/manifest.json public/build/manifest.json; \
+    fi
 
 # Stage 2 - Backend (Laravel + PHP + Composer)
 FROM php:8.1-apache AS backend
