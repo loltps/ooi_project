@@ -26,6 +26,10 @@ tail -n +1 -F /var/www/storage/logs/laravel.log &
 php -v || true
 ls -la /var/www/vendor || true
 
+# Debug: Check if build assets exist
+echo "=== Checking build assets at startup ==="
+ls -laR /var/www/public/build/ || echo "BUILD FOLDER NOT FOUND!"
+cat /var/www/public/build/manifest.json || echo "MANIFEST NOT FOUND!"
 
 # Run migrations (optional - uncomment if you have a database)
 # php artisan migrate --force

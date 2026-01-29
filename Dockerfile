@@ -6,9 +6,10 @@ COPY package*.json ./
 RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 COPY . .
 RUN npm run build && \
-    ls -la public/build/ && \
-    (cp public/build/.vite/manifest.json public/build/manifest.json 2>/dev/null || true) && \
-    cat public/build/manifest.json
+    echo "=== Build directory contents ===" && \
+    ls -laR public/build/ && \
+    echo "=== Manifest contents ===" && \
+    cat public/build/manifest.json || cat public/build/.vite/manifest.json
 
 # Stage 2 - Backend (Laravel + PHP + Composer)
 FROM php:8.1-apache AS backend
@@ -31,8 +32,10 @@ COPY . .
 # Copy built frontend assets into container
 COPY --from=frontend /app/public/build ./public/build
 
-# Ensure manifest is in the right place and remove hot file
-RUN rm -f public/hot
+# Verify assets are copied and remove hot file
+RUN echo "=== Verifying build assets in backend ===" && \
+    ls -laR public/build/ && \
+    rm -f public/hot
 
 # Install PHP deps (prefer-dist, no-dev)
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
