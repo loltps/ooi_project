@@ -7,11 +7,10 @@ export default defineConfig({
     laravel({
       input: [
         'resources/js/app.js',
-        'resources/css/app.css',             // keep if you actually have this
-        // corrected paths below (use resources/scss)
+        'resources/css/app.css',
         'resources/scss/index.scss',
         'resources/scss/home.scss',
-        'resources/scss/about.scss',
+        'resources/scss/about_us.scss',
         'resources/scss/contact.scss',
       ],
       buildDirectory: 'build',
