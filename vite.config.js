@@ -7,7 +7,6 @@ export default defineConfig({
     laravel({
       input: [
         'resources/js/app.js',
-        'resources/css/app.css',
         'resources/scss/index.scss',
         'resources/scss/home.scss',
         'resources/scss/about_us.scss',
@@ -18,9 +17,9 @@ export default defineConfig({
     }),
   ],
   build: {
+    manifest: 'manifest.json',
     outDir: resolve(__dirname, 'public/build'),
     emptyOutDir: true,
-    manifest: true,
     rollupOptions: {
       output: {
         assetFileNames: 'assets/[name].[hash][extname]',

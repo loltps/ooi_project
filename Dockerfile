@@ -6,9 +6,9 @@ COPY package*.json ./
 RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 COPY . .
 RUN npm run build && \
-    if [ -f public/build/.vite/manifest.json ]; then \
-        cp public/build/.vite/manifest.json public/build/manifest.json; \
-    fi
+    ls -la public/build/ && \
+    (cp public/build/.vite/manifest.json public/build/manifest.json 2>/dev/null || true) && \
+    cat public/build/manifest.json
 
 # Stage 2 - Backend (Laravel + PHP + Composer)
 FROM php:8.1-apache AS backend
