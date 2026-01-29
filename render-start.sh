@@ -1,14 +1,9 @@
 #!/bin/bash
 
 # Ensure permissions are correct
-chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/public/dist /var/www/public/build 2>/dev/null || true
+chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/public/build 2>/dev/null || true
 chmod -R 775 /var/www/storage /var/www/bootstrap/cache 2>/dev/null || true
-chmod -R 755 /var/www/public/dist /var/www/public/build 2>/dev/null || true
-
-# Ensure manifest exists in both locations
-if [ -f /var/www/public/dist/manifest.json ] && [ ! -f /var/www/public/build/manifest.json ]; then
-    cp /var/www/public/dist/manifest.json /var/www/public/build/manifest.json
-fi
+chmod -R 755 /var/www/public/build 2>/dev/null || true
 
 # Remove hot file if it exists
 rm -f /var/www/public/hot

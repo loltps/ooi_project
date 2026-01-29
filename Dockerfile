@@ -5,8 +5,7 @@ COPY package*.json ./
 # Use npm ci when lockfile present (faster, deterministic)
 RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 COPY . .
-RUN npm run build && \
-    mv public/dist/.vite/manifest.json public/dist/manifest.json || true
+RUN npm run build
 
 # Stage 2 - Backend (Laravel + PHP + Composer)
 FROM php:8.1-apache AS backend
@@ -29,10 +28,8 @@ COPY . .
 # Copy built frontend assets into container
 COPY --from=frontend /app/public/build ./public/build
 
-# Ensure Laravel sees build manifest and remove any hot file
-RUN cp -r public/dist public/build || true \
-    && cp public/dist/manifest.json public/build/manifest.json 2>/dev/null || true \
-    && rm -f public/hot
+# Ensure manifest is in the right place and remove hot file
+RUN rm -f public/hot
 
 # Install PHP deps (prefer-dist, no-dev)
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
