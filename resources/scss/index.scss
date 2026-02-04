@@ -1,12 +1,18 @@
 $bgcolor: rgb(117, 33, 167);
 
 // Reset body margin and add padding for fixed navbar
-body {
+html, body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; /* Critical to prevent horizontal scroll from animations */
+}
+
+body {
   padding-top: 147px; // Add padding to prevent content from being hidden behind fixed navbar
   font-family: Garamond, serif;
-  overflow-x: hidden; // Prevent horizontal scrollbar from GSAP animations
+  position: relative;
 }
 
 ::selection {

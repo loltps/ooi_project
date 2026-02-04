@@ -211,36 +211,35 @@
 <script>
     document.addEventListener("DOMContentLoaded", (event) => {
         gsap.registerPlugin(ScrollTrigger);
+        let mm = gsap.matchMedia();
 
+        // 1. Universal Animations (Vertical Only)
+        
         // Welcome Text Animation (On Load)
         let tl = gsap.timeline();
-        
         tl.from(".welcome-text h3", {
-            y: 100,           // Move from 100px below
-            opacity: 0,       // Start invisible
-            duration: 1.5,    // Animation duration
-            ease: "power4.out" // "Sudden" start, smooth end
+            y: 100,
+            opacity: 0,
+            duration: 1.5,
+            ease: "power4.out"
         })
         .from(".welcome-text p", {
             y: 50,
             opacity: 0,
             duration: 1.5,
             ease: "power4.out"
-        }, "-=0.6"); // Overlap slightly with previous animation
-
+        }, "-=0.6");
 
         // Info Section Animation (On Scroll)
         const infoContents = document.querySelectorAll('.info-content');
-        
         infoContents.forEach((content) => {
             let infoTl = gsap.timeline({
                 scrollTrigger: {
                     trigger: content,
-                    start: "top 80%", // Animation starts when top of content is 80% down viewport
+                    start: "top 80%",
                     toggleActions: "play none none reset"
                 }
             });
-
             infoTl.from(content.querySelector("h3"), {
                 y: 50,
                 opacity: 0,
@@ -254,40 +253,6 @@
                 ease: "power4.out"
             }, "-=0.6");
         });
-
-        // Features Section Animation (On Scroll)
-        // Select all feature columns (there are 4)
-        const featureCols = document.querySelectorAll('.features-section .row > div');
-        
-        if (featureCols.length >= 4) {
-            // Features 1 & 2: Move from Left to Right
-            gsap.from([featureCols[0], featureCols[1]], {
-                scrollTrigger: {
-                    trigger: ".features-section",
-                    start: "top 80%",
-                    toggleActions: "play none none reset"
-                },
-                x: -100,      // Come from left
-                opacity: 0,
-                duration: 3.0,
-                // stagger: 0.2, // Slight delay between item 1 and 2
-                ease: "power4.out"
-            });
-
-            // Features 3 & 4: Move from Right to Left
-            gsap.from([featureCols[2], featureCols[3]], {
-                scrollTrigger: {
-                    trigger: ".features-section",
-                    start: "top 80%",
-                    toggleActions: "play none none reset"
-                },
-                x: 100,       // Come from right
-                opacity: 0,
-                duration: 3.0,
-                // stagger: 0.2, // Slight delay between item 3 and 4
-                ease: "power4.out"
-            });
-        }
 
         // Swiper Section Header Animation
         const swiperHeader = document.querySelector('.swiper-header');
@@ -315,7 +280,6 @@
                     toggleActions: "play none none reset"
                 }
             });
-
             headerTl.from(serviceHeader.querySelector("h2"), {
                 y: 50,
                 opacity: 0,
@@ -330,38 +294,103 @@
             }, "<");
         }
 
-        // Service Rows Animation
-        const serviceRows = document.querySelectorAll('.service-row');
-        
-        if (serviceRows.length > 0) {
-            // Row 1: Left to Right
-            gsap.from(serviceRows[0], {
-                scrollTrigger: {
-                    trigger: serviceRows[0],
-                    start: "top 80%",
-                    toggleActions: "play none none reset"
-                },
-                x: -100,
-                opacity: 0,
-                duration: 3.0,
-                ease: "power4.out"
+        // 2. Desktop Specific (Horizontal Movement)
+        mm.add("(min-width: 992px)", () => {
+             // Features Section Animation
+            const featureCols = document.querySelectorAll('.features-section .row > div');
+            if (featureCols.length >= 4) {
+                // Features 1 & 2: Move from Left
+                gsap.from([featureCols[0], featureCols[1]], {
+                    scrollTrigger: {
+                        trigger: ".features-section",
+                        start: "top 80%",
+                        toggleActions: "play none none reset"
+                    },
+                    x: -100,
+                    opacity: 0,
+                    duration: 3.0,
+                    ease: "power4.out"
+                });
+                // Features 3 & 4: Move from Right
+                gsap.from([featureCols[2], featureCols[3]], {
+                    scrollTrigger: {
+                        trigger: ".features-section",
+                        start: "top 80%",
+                        toggleActions: "play none none reset"
+                    },
+                    x: 100,
+                    opacity: 0,
+                    duration: 3.0,
+                    ease: "power4.out"
+                });
+            }
+
+            // Service Rows Animation
+            const serviceRows = document.querySelectorAll('.service-row');
+            if (serviceRows.length > 0) {
+                gsap.from(serviceRows[0], {
+                    scrollTrigger: {
+                        trigger: serviceRows[0],
+                        start: "top 80%",
+                        toggleActions: "play none none reset"
+                    },
+                    x: -100,
+                    opacity: 0,
+                    duration: 3.0,
+                    ease: "power4.out"
+                });
+            }
+            if (serviceRows.length > 1) {
+                gsap.from(serviceRows[1], {
+                    scrollTrigger: {
+                        trigger: serviceRows[1],
+                        start: "top 80%",
+                        toggleActions: "play none none reset"
+                    },
+                    x: 100,
+                    opacity: 0,
+                    duration: 3.0,
+                    ease: "power4.out"
+                });
+            }
+        });
+
+        // 3. Mobile Specific (Vertical Movement only)
+        mm.add("(max-width: 991px)", () => {
+             // Features Section - Fade Up
+            const featureCols = document.querySelectorAll('.features-section .row > div');
+            if (featureCols.length > 0) {
+                gsap.from(featureCols, {
+                    scrollTrigger: {
+                        trigger: ".features-section",
+                        start: "top 85%",
+                        toggleActions: "play none none reset"
+                    },
+                    y: 50,
+                    opacity: 0,
+                    duration: 1.5,
+                    stagger: 0.1,
+                    ease: "power4.out"
+                });
+            }
+
+            // Service Rows - Fade Up
+            const serviceRows = document.querySelectorAll('.service-row');
+            serviceRows.forEach(row => {
+                gsap.from(row, {
+                    scrollTrigger: {
+                        trigger: row,
+                        start: "top 85%",
+                        toggleActions: "play none none reset"
+                    },
+                    y: 50,
+                    opacity: 0,
+                    duration: 1.5,
+                    ease: "power4.out"
+                });
             });
-        }
-        
-        if (serviceRows.length > 1) {
-            // Row 2: Right to Left
-            gsap.from(serviceRows[1], {
-                scrollTrigger: {
-                    trigger: serviceRows[1],
-                    start: "top 80%",
-                    toggleActions: "play none none reset"
-                },
-                x: 100,
-                opacity: 0,
-                duration: 3.0,
-                ease: "power4.out"
-            });
-        }
+        });
+
     });
 </script>
 @endpush
