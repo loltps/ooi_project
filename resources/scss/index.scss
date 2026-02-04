@@ -5,6 +5,13 @@ body {
   margin: 0;
   padding: 0;
   padding-top: 147px; // Add padding to prevent content from being hidden behind fixed navbar
+  font-family: Garamond, serif;
+  overflow-x: hidden; // Prevent horizontal scrollbar from GSAP animations
+}
+
+::selection {
+  color: white;
+  background: rgb(217, 132, 146);
 }
 
 // Navbar styles
@@ -466,4 +473,20 @@ body {
   body {
     padding-top: 88px;
   }
+}
+
+/* WhatsApp Tippy Tada Animation - synced with whatsappShake (3s duration, action in first ~20%) */
+@keyframes tada {
+    0% { transform: scale(1); }
+    2%, 4% { transform: scale(0.9) rotate(-3deg); }
+    6%, 10%, 14%, 18% { transform: scale(1.1) rotate(3deg); }
+    8%, 12%, 16% { transform: scale(1.1) rotate(-3deg); }
+    20% { transform: scale(1) rotate(0); }
+    100% { transform: scale(1) rotate(0); }
+}
+
+/* Apply animation to the tippy box */
+.tippy-box[data-animation='tada'] {
+    animation: tada 3s ease-in-out infinite;
+    transform-origin: center;
 }

@@ -4,6 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Stella Maris Home Care offers professional and compassionate elderly care services in Petaling Jaya using a modern, comfortable, and safe environment.">
+    <meta name="keywords" content="nursing home, elderly care, senior living, petaling jaya, SMH Care, aged care">
 
     <title>Stella Maris Home</title>
     <link rel="icon" type="image/x-icon" href="/assets/img/header/logo-transparent.png">
@@ -237,6 +239,39 @@
             });
         })();
     </script>
+
+    <!-- Tippy.js for WhatsApp Button -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const waBtn = document.getElementById('whatsappFloat');
+            if (waBtn) {
+                tippy(waBtn, {
+                    // Content with a close button
+                    content: `<div style="display: flex; align-items: center; gap: 8px; font-family: inherit;">
+                                <span>Chat with us!</span>
+                                <button onclick="document.getElementById('whatsappFloat')._tippy.hide()" 
+                                        style="background:transparent; border:none; color:inherit; opacity: 0.8; font-size:16px; cursor:pointer; line-height:1; padding:0 0 0 4px; font-weight: bold;">
+                                    &times;
+                                </button>
+                              </div>`,
+                    allowHTML: true,
+                    showOnCreate: true, // Display on load
+                    trigger: 'manual', // Keep open until manually hidden
+                    hideOnClick: false, // Prevent closing on outside clicks (only close via button)
+                    interactive: true,
+                    placement: 'top',
+                    animation: 'tada', // Use our custom tada CSS animation
+                    zIndex: 9999,
+                    popperOptions: {
+                        strategy: 'fixed',
+                    },
+                });
+            }
+        });
+    </script>
+
     @stack('scripts')
 </body>
 
