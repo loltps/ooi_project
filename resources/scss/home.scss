@@ -1,25 +1,42 @@
 .title-section {
-    min-height: calc(100vh - 147px);
+    min-height: calc(100vh - 147px); /* Fallback */
+    min-height: calc(100dvh - 147px); /* Dynamic viewport height for mobile */
+    width: 100%;
     padding: 6rem 0;
     display: flex;
     align-items: center;
     justify-content: center;
     color: whitesmoke;
     text-align: center;
+    overflow: hidden; /* Ensure background image or content doesn't spill */
 
     @media (max-width: 576px) {
         min-height: calc(100vh - 88px);
+        min-height: calc(100dvh - 88px);
+        padding: 3rem 0;
     }
 
     .welcome-text {
         h3 {
             font-size: 4rem;
             margin-bottom: 1rem;
+
+            @media (max-width: 768px) {
+                font-size: 3rem;
+            }
+
+            @media (max-width: 576px) {
+                font-size: 2.2rem;
+            }
         }
 
         p {
             font-size: 1.5rem;
             opacity: 0.9;
+
+            @media (max-width: 576px) {
+                font-size: 1.1rem;
+            }
         }
     }
 }
