@@ -50,8 +50,8 @@
 
     @media (max-width: 576px) {
         min-height: calc(100vh - 88px);
-        // min-height: calc(100dvh - 88px);
-        // padding: 3rem 0;
+        min-height: calc(100dvh - 88px);
+        padding: 3rem 0;
     }
 
     .welcome-text {
