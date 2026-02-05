@@ -10,10 +10,48 @@
     text-align: center;
     overflow: hidden; /* Ensure background image or content doesn't spill */
 
+    /* Spinning Badge Styles */
+    .spinning-badge {
+        position: absolute;
+        bottom: 0%;
+        left: 0%;
+        width: 200px;
+        z-index: 10;
+        animation: spin-slow 10s linear infinite;
+        pointer-events: none; /* Let clicks pass through */
+        
+        @media (max-width: 992px) {
+            width: 180px;
+            bottom: 0%;
+            left: 0%;
+        }
+
+        @media (max-width: 768px) {
+            width: 180px;
+            bottom: 0%;
+            left: 0%;
+        }
+
+        @media (max-width: 576px) {
+            width: 180px;
+            bottom: 0%;
+            left: 0%;
+        }
+    }
+
+    @keyframes spin-slow {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
     @media (max-width: 576px) {
         min-height: calc(100vh - 88px);
-        min-height: calc(100dvh - 88px);
-        padding: 3rem 0;
+        // min-height: calc(100dvh - 88px);
+        // padding: 3rem 0;
     }
 
     .welcome-text {
@@ -22,11 +60,11 @@
             margin-bottom: 1rem;
 
             @media (max-width: 768px) {
-                font-size: 3rem;
+                font-size: 3.5rem;
             }
 
             @media (max-width: 576px) {
-                font-size: 2.2rem;
+                font-size: 2.5rem;
             }
         }
 
@@ -35,7 +73,7 @@
             opacity: 0.9;
 
             @media (max-width: 576px) {
-                font-size: 1.1rem;
+                font-size: 1.2rem;
             }
         }
     }

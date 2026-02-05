@@ -3,11 +3,17 @@
 
 <head>
     <meta charset="utf-8">
+    <meta name="google-site-verification" content="eTIXir0wAZ7m6PTdTwKAIu3TWwVA_8xcNkUrPKjQ5wg" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Stella Maris Home Care offers professional and compassionate elderly care services in Petaling Jaya using a modern, comfortable, and safe environment.">
-    <meta name="keywords" content="nursing home, elderly care, senior living, petaling jaya, SMH Care, aged care">
+    <meta name="description" content="@yield('meta_description', 'Stella Maris Home Care offers professional and compassionate elderly care services in Petaling Jaya using a modern, comfortable, and safe environment.')">
+    <meta name="keywords" content="@yield('meta_keywords', 'nursing home, elderly care, senior living, petaling jaya, SMH Care, aged care')">
+    <meta property="og:title" content="@yield('title', 'Stella Maris Home')">
+    <meta property="og:description" content="@yield('meta_description', 'Stella Maris Home Care offers professional and compassionate elderly care services in Petaling Jaya using a modern, comfortable, and safe environment.')">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:image" content="@yield('og_image', asset('assets/img/header/logo-transparent.png'))">
 
-    <title>Stella Maris Home</title>
+    <title>@yield('title', 'Stella Maris Home')</title>
     <link rel="icon" type="image/x-icon" href="/assets/img/header/logo-transparent.png">
 
     <!-- Fonts -->
