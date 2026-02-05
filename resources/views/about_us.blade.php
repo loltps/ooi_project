@@ -1,5 +1,8 @@
 @extends('index')
 
+@section('title', 'About Us - Stella Maris Home Care')
+@section('meta_description', 'Learn about Stella Maris Home Care, our mission, and our dedication to providing exceptional elderly care.')
+
 @section('style')
 @vite('resources/scss/about_us.scss')
 @endsection

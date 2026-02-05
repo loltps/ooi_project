@@ -1,5 +1,8 @@
 @extends('index')
 
+@section('title', 'Home - Stella Maris Home Care')
+@section('meta_description', 'Stella Maris Home Care provides compassionate elderly care in Petaling Jaya. A safe, comfortable environment for your loved ones.')
+
 @section('style')
 @vite('resources/scss/home.scss')
 @endsection
@@ -7,6 +10,10 @@
 @section('content')
 <section class="title-section" style="position: relative; overflow: hidden;">
     <div style="background: url('{{ asset('assets/img/home/home1.png') }}') no-repeat center center/cover; position: absolute; top: 0; left: 0; right: 0; bottom: 0; filter: blur(8px); transform: scale(1.1); z-index: -1;"></div>
+    
+    {{-- Spinning Badge --}}
+    <img src="{{ asset('assets/img/home/smhlogo-removebg-preview.png') }}" class="spinning-badge" alt="SMH Care">
+
     <div class="container">
         <div class="welcome-text">
             <h3>{!! __('home.welcome to SMH Care') !!}</h3>

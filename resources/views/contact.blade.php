@@ -1,5 +1,8 @@
 @extends('index')
 
+@section('title', 'Contact Us - Stella Maris Home Care')
+@section('meta_description', 'Get in touch with Stella Maris Home Care in Petaling Jaya. We are here to answer your questions about elderly care.')
+
 @section('style')
 @vite('resources/scss/contact.scss')
 @endsection
